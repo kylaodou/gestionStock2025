@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Rapport des fournisseurs</title>
+    <style>
+        @page {
+            size: A4 landscape;
+            /* Changer l'orientation en paysage */
+        }
+
+        body {
+            font-family: 'DejaVu Sans', sans-serif;
+            font-size: 16px;
+            /* Augmenter la taille de la police */
+            margin: 0;
+            padding: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            border: 1px solid black;
+            padding: 8px;
+            text-align: center;
+            /* Centrer le contenu */
+            vertical-align: middle;
+            /* Centrer verticalement */
+            overflow: hidden;
+            white-space: normal;
+            /* Permettre au texte de revenir à la ligne */
+            word-wrap: break-word;
+            /* Permettre la césure des mots */
+        }
+
+        th {
+            background-color: #d65479;
+            color: white;
+        }
+
+        td {
+            background-color: #ece2e5;
+        }
+
+        img {
+            width: auto;
+            /* Ajuster la taille des images */
+            max-width: 100px;
+            /* Limiter la largeur maximale de l'image */
+            height: auto;
+            display: block;
+            /* Centrer l'image dans la cellule */
+            margin: 0 auto;
+        }
+
+        /* Ajouter des styles pour les listes dans les cellules de la table */
+        ul {
+            padding: 0;
+            margin: 0;
+            list-style-type: none;
+        }
+
+        li {
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content_mai">
+        <div class="userlist">
+            <h2>Rapport fournisseurs</h2>
+            <table>
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nom</th>
+                        <th>Adresse</th>
+                        <th>Produits</th>
+                        <th>Email</th>
+                        <th>Crée par</th>
+                        <th>Crée le</th>
+                        <th>Mis à jour</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach ($fournisseurs as $fournisseur)
+                        <tr>
+                            <td>{{ $fournisseur->id }}</td>
+                            <td>{{ $fournisseur->nom_fournisseur }}</td>
+                            <td>{{ $fournisseur->adresse_fournisseur }}</td>
+                            <td>
+                                <ul>
+                                    @foreach ($fournisseur->produits as $produit)
+                                        <li class="list_prfr">{{ $produit->nom_produit }}</li>
+                                    @endforeach
+                                </ul>
+                            </td>
+                            <td>{{ $fournisseur->email }}</td>
+                            <td>{{ optional($fournisseur->utilisateur)->nom }}
+                                {{ optional($fournisseur->utilisateur)->prenom }}
+                            </td>
+                            <td>{{ $fournisseur->created_at->format('d M Y à H:i:s') }}</td>
+                            <td>{{ $fournisseur->updated_at->format('d M Y à H:i:s') }}</td>
+                        </tr>
+                    @endforeach
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</body>
+
+</html>
