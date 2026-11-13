@@ -26,10 +26,12 @@ class ConnexionController extends Controller
     }
 
     // Méthode deconnexion() pour gérer la déconnexion de l'utilisateur
-    public function deconnexion()
+    public function deconnexion(Request $request)
     {
         // Déconnexion de l'utilisateur actuellement authentifié
         Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
 
         // Redirection vers la page d'accueil après la déconnexion
         return redirect('/');
@@ -49,29 +51,19 @@ class ConnexionController extends Controller
         // Récupération des identifiants de connexion à partir de la requête
         $credentials = $request->only('email', 'password');
 
-        // Récupération de l'email depuis la requête
-        $email = $request->email;
-
         // Tentative d'authentification de l'utilisateur avec les identifiants fournis
         if (Auth::attempt($credentials)) {
+            // Nouvel identifiant de session après connexion (protection contre la fixation de session)
+            $request->session()->regenerate();
+
             // Redirection vers le tableau de bord en cas de succès de l'authentification
-            return redirect('/dashboard');
+            return redirect()->intended('/dashboard');
         }
 
-        // Vérification si l'email existe dans la base de données des utilisateurs
-        if (!Utilisateur::where('email', $email)->first()) {
-            // Retour à la page précédente avec un message d'erreur si l'email n'existe pas
-            return redirect()
-                ->back()
-                ->withErrors(['email' => '*Email inexistant.']) // Message d'erreur
-                ->withInput(); // Remplissage des champs du formulaire avec les données précédemment saisies
-        } else {
-            // L'email existe, mais l'authentification a échoué en raison d'un mot de passe incorrect
-            // Retour à la page précédente avec un message d'erreur indiquant que le mot de passe est incorrect
-            return redirect()
-                ->back()
-                ->withErrors(['password' => '*Le mot de passe est incorrect.']) // Message d'erreur
-                ->withInput(); // Remplissage des champs du formulaire avec les données précédemment saisies
-        }
+        // Même message que l'email existe ou non : on ne révèle pas les comptes existants
+        return redirect()
+            ->back()
+            ->withErrors(['email' => '*Email ou mot de passe incorrect.'])
+            ->withInput($request->only('email'));
     }
 }

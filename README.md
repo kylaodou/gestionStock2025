@@ -19,14 +19,14 @@ Une copie de ce projet préparée pour le déploiement sur Heroku se trouve dans
 
 ## Stack technique
 
-- PHP 8.1+, Laravel 10
+- PHP 8.2+, Laravel 12
 - MySQL
 - maatwebsite/excel (Excel), barryvdh/laravel-dompdf (PDF)
 - Bootstrap, Font Awesome
 
 ## Prérequis
 
-- PHP 8.1+ avec les extensions `pdo_mysql`, `gd`, `zip`
+- PHP 8.2+ avec les extensions `pdo_mysql`, `gd`, `zip`
 - Composer 2
 - MySQL 8 (ou MariaDB)
 
@@ -52,15 +52,31 @@ DB_USERNAME=root
 DB_PASSWORD=
 ```
 
-Puis :
+Ajoutez aussi le premier utilisateur dans `.env` :
+
+```env
+ADMIN_NOM=Ouedraogo
+ADMIN_PRENOM=Awa
+ADMIN_EMAIL=admin@gmail.com
+ADMIN_PASSWORD=un-mot-de-passe-solide
+```
+
+Puis créez les tables et ce compte :
 
 ```bash
-php artisan migrate
+php artisan migrate --seed
+npm install && npm run build
 php artisan serve
 ```
 
-L'application est disponible sur http://localhost:8000. Créez un compte depuis la page
-d'inscription.
+L'application est disponible sur http://localhost:8000. Les autres comptes s'ajoutent ensuite depuis l'application,
+par un utilisateur connecté : la création de compte n'est pas ouverte au public.
+
+## Tests
+
+```bash
+php artisan test
+```
 
 ## Auteur
 
