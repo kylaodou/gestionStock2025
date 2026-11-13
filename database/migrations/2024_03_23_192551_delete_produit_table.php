@@ -14,8 +14,9 @@ return new class extends Migration
     {
         // Supprimer la contrainte de clé étrangère d'abord
         Schema::table('produits', function (Blueprint $table) {
-            // Nom de la contrainte de clé étrangère générée par Laravel
-            $table->dropForeign('produits_fournisseur_id_foreign');
+            // Contrainte « produits_fournisseur_id_foreign », désignée par sa colonne
+            // (forme acceptée par MySQL comme par SQLite)
+            $table->dropForeign(['fournisseur_id']);
         });
 
         // Ensuite, supprimer la colonne "fournisseur_id"
