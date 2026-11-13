@@ -11,6 +11,23 @@ class SecuriteTest extends TestCase
 {
     use RefreshDatabase;
 
+    /**
+     * Pose (ou retire) une variable d'environnement pour la durée du test, quelle que soit
+     * la valeur du fichier .env local.
+     */
+    private function definirVariable(string $nom, ?string $valeur): void
+    {
+        if ($valeur === null) {
+            unset($_ENV[$nom], $_SERVER[$nom]);
+            putenv($nom);
+            return;
+        }
+
+        $_ENV[$nom] = $valeur;
+        $_SERVER[$nom] = $valeur;
+        putenv("$nom=$valeur");
+    }
+
     private function utilisateur(): Utilisateur
     {
         $user = new Utilisateur();
@@ -33,15 +50,15 @@ class SecuriteTest extends TestCase
 
     public function test_le_premier_utilisateur_est_cree_par_le_seeder(): void
     {
-        putenv('ADMIN_EMAIL=premier@gmail.com');
-        putenv('ADMIN_PASSWORD=motdepasse');
+        $this->definirVariable('ADMIN_EMAIL', 'premier@gmail.com');
+        $this->definirVariable('ADMIN_PASSWORD', 'motdepasse');
 
         $this->seed();
 
         $this->assertDatabaseHas('utilisateurs', ['email' => 'premier@gmail.com']);
 
-        putenv('ADMIN_EMAIL');
-        putenv('ADMIN_PASSWORD');
+        $this->definirVariable('ADMIN_EMAIL', null);
+        $this->definirVariable('ADMIN_PASSWORD', null);
     }
 
     public function test_un_visiteur_ne_peut_pas_creer_de_compte(): void
